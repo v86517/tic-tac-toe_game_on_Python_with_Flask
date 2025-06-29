@@ -19,17 +19,17 @@
 ## Chapter I
 ## Инструкция
 
-Запуск серверной части:
-`cd 'project_directory'`
-`python -m venv venv`
-`source venv/bin/activate`
-`pip install flask`
-`pip freeze > requirements.txt`
-`pip install -r requirements.txt`
-`python -m src.main`
+Запуск серверной части:  
+`cd 'project_directory'`  
+`python -m venv venv`  
+`source venv/bin/activate`  
+`pip install flask`  
+`pip freeze > requirements.txt`  
+`pip install -r requirements.txt`  
+`python -m src.main`  
 
-Запуск клиента:
-`python 'project_directory'/src/api_client.py`
+Запуск клиента:  
+`python 'project_directory'/src/api_client.py`  
 
 
 ## Chapter II
