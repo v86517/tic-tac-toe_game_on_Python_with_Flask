@@ -23,13 +23,11 @@
 `cd 'project_directory'`  
 `python -m venv venv`  
 `source venv/bin/activate`  
-`pip install flask`  
-`pip freeze > requirements.txt`  
-`pip install -r requirements.txt`  
+`pip install -r src/requirements.txt`  
 `python -m src.main`  
 
 Запуск клиента:  
-`python 'project_directory'/src/api_client.py`  
+`python 'project_directory'/src/client.py`  
 
 
 ## Chapter II
