@@ -19,19 +19,19 @@
 ## Chapter I
 ## Инструкция
 
-	Start server part:
-`cd 'project_directory'`
-`python -m venv venv`
-`source venv/bin/activate`
-`pip install -r src/requirements.txt`
-`python -m src.main`
+	Start server part: 
+`cd 'project_directory'` 
+`python -m venv venv` 
+`source venv/bin/activate` 
+`pip install -r src/requirements.txt` 
+`python -m src.main` 
 
-	Start client part in browser:
+	Start client part in browser: 
 http://localhost:5000/
 
-	Stop server part:
-Press CTRL+C to quit
-`deactivate` #exit from venv
+	Stop server part: 
+Press CTRL+C to quit 
+`deactivate` #exit from venv 
 
 ## Chapter II
 ## Общая информация
