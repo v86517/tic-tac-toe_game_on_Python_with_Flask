@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+	<script>
+		
+		async function create_new_game(two_players)
+        {   
+            makeRequestWithJWT('get', '/create_new_game/' + two_players).then((result_request) => {
+				this_url = result_request.new_url
+                window.location.href = this_url 
+            })
+        }
+    </script>
+	
+	<button class="btn" onclick="create_new_game(false)">Против ПК</button>
+	<br>
+    <br>
+	<button class="btn" onclick="create_new_game(true)">Против Игрока</button>
+	<br>
+    <br>
+	<form method="GET" action="/list_games">
+		<button class="btn">Назад</button>
+	</form>
+
+{% endblock %}

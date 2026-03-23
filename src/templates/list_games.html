@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block content %}
+	
+	<script>
+        async function logout() 
+        {   
+            localStorage.removeItem('access_token');
+            localStorage.removeItem('refresh_token');
+			window.location.href = '/login'
+        }
+		
+		async function join_game(new_id_game) 
+        {   
+            makeRequestWithJWT('get', '/join_game/' + new_id_game).then((result_request) => {
+				this_url = result_request.new_url
+                window.location.href = this_url 
+            })
+        }
+    </script>
+	<form method="GET" action="/new_game">
+		<button class="btn">Новая игра</button>
+	</form>
+
+    <form id='profile_form' method="GET">
+		<button class="btn">Ваш профиль</button>
+	</form>
+
+	<form method="GET" action="/history_games">
+		<button class="btn">Ваша история игр</button>
+	</form>
+	
+	<form method="GET" action="/list_leaders">
+		<button class="btn">Список лидеров</button>
+	</form>
+
+    <button class="btn" onclick="logout()">Выход</button>
+
+    <h3>Список начатых игр</h3>
+
+	<table style="margin-left: auto; margin-right: auto; border-collapse: collapse;">
+	<thead>
+		<tr>
+			<th style="width: 280px;">Кем создана игра</th>
+            <th style="width: 270px;">Когда создана игра</th>
+			<th style="width: 350px;">ID игры</th>
+			<th style="width: 190px;">Играть</th>
+		</tr>
+	</thead>
+	<tbody id='body_table_list_games'>
+	</tbody>
+    </table>
+	<script defer>
+        window.onload = function() 
+        {
+            makeRequestWithJWT('get', '/get_user_uuid').then((user_info) => {
+                document.getElementById('profile_form').action = "/profile/" + user_info.uuid_user;
+            })
+			
+			makeRequestWithJWT('get', '/get_list_games').then((result_request) => {
+                list_games = result_request.list_games
+                table_body = document.getElementById('body_table_list_games');
+                var result_body = ''
+
+                if (list_games.length > 0) {
+
+                for (let i = 0; i < list_games.length; i++) {
+                    const item = list_games[i];
+                    var creator_text = '<p style="font-size: 13px;">' + "ID: " + item["creator"] + "</p>"
+                    var cell_1 = "<td>" + "Игрок: " + item["creator_login"] + "<br>" + creator_text + "</td>";
+                    var cell_2 = "<td>" + item["created_datetime"] + "</td>";
+                    var cell_3 = "<td>" + item["uuid_game"] + "</td>";
+                    var cell_4 = '<td> <button  class="btn" onclick="join_game(' + "'" + item['uuid_game'] + "'" + ')">Играть</button></td>';
+                    var row = "<tr style='height: 50px;'>" + cell_1 + cell_2 + cell_3 + cell_4 + "</tr>"
+                    result_body += row
+                }
+                }
+                else {
+                    var cell_1 = '<td style="text-align: center;">' + "---" + "</td>";
+                    var cell_2 = '<td style="text-align: center;">' + "---" + "</td>";
+                    var cell_3 = '<td style="text-align: center;">' + "---" + "</td>";
+                    result_body = "<tr style='height: 50px;'>"+cell_1+cell_2+cell_3+"</tr>"
+
+                }
+
+
+                table_body.innerHTML = result_body
+            })
+        }
+        
+    </script>
+
+{% endblock %}

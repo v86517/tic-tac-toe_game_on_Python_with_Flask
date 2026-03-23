@@ -1,0 +1,94 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic tac toe</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+        }
+         .btn {
+            padding: 10px 20px;
+            font-size: 16px;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin: 10px;
+            line-height: 10px;
+
+            height: 40px;
+            width: 18%;
+            border-radius: 15px;        }
+        .btn.login{background-color: #856db6;}
+        .btn.signup{background-color: #4CAF50;}
+
+        .btn.login:hover {
+            background-color: #6c5893;6c5893 /* Темно-зеленый при наведении */
+        }
+        .btn.signup:hover {
+            background-color: #45a049; /* Темно-синий при наведении */
+        }
+        input {
+            padding: 8px;
+            margin: 10px;
+            font-size: 16px;
+            width: 18%;
+        }
+
+    </style>
+	<script>
+        async function sign_up()
+        {
+            username = document.getElementById("login").value;
+            password = document.getElementById("password").value;
+
+            if (username == "" || password == "") {
+                alert("Login and password must be filled out");
+            }
+            else{
+
+            const options = {
+                                method: 'post',
+                                headers: {'Content-Type': 'application/json;charset=utf-8'},
+                                body: JSON.stringify({'login': username, 'password': password })
+                            }
+
+            const response = await fetch('/sign_up', options);
+            const result = await response.json();
+
+            if (result.error)
+            {
+                alert('Error: ' + result.error);
+            }
+            else
+            {
+                localStorage.setItem('access_token', result["accessToken"]);
+                localStorage.setItem('refresh_token', result["refreshToken"]);
+                window.location.href = '/list_games'
+            }}
+        }
+    </script>
+</head>
+<body>
+	<div >
+		<h3>Создать игрока</h3>
+		<div>
+
+			<div>
+				<input id="login"  name="login" placeholder="Логин">
+			</div>
+			<div>
+				<input id="password"  type="password" name="password" placeholder="Пароль">
+			</div>
+			<button class = "btn signup" onclick="sign_up()">Создать</button>
+                        <h4>или</h4>
+			<form method="GET" action="/login">
+				<button class = "btn login">Войти</button>
+			</form>
+		</div>
+	</div>
+</body>
+</html>

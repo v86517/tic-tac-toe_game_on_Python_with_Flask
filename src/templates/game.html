@@ -1,0 +1,125 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic tac toe</title>
+    <style>
+         body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            <!--margin: 20px;-->
+        }
+        .btn {
+            text-align: center;
+            font-size: 36px;
+            width: 100px;
+            height: 100px;
+        }
+        .board {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            grid-template-rows: repeat(3, 100px);
+            width: 310px;
+            height: 310px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+    </style>
+    <script>
+        setTimeout(function(){
+            location.reload();
+        }, 3000);
+    </script>
+
+	<script>
+        async function makeRequestWithJWT(new_method, new_url, new_body)
+        {
+            var options = {
+                method: new_method,
+                headers:
+                    {
+                    Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+					'Content-Type': 'application/json;charset=utf-8'
+                    }
+                };
+
+			if (new_method == "post")
+            {
+                options["body"] = new_body
+            }
+
+            const response = await fetch(new_url, options);
+            const result = await response.json();
+
+            if (result.error)
+            {
+                // alert('Error: ' + result.error);
+                window.location.href = '/login'
+            }
+            else
+            {
+                return result
+            }
+        }
+
+        async function make_move(i, j)
+        {
+            const uuid_game = window.location.pathname.split('/')[2]
+            makeRequestWithJWT('post', '/game_info/' + uuid_game, JSON.stringify({ 'i': i, 'j': j }));
+            location.reload();
+        }
+    </script>
+
+</head>
+<body>
+
+	<h3 id='icon_player_label'></h3>
+	<h3 id='status_game_label'></h3>
+    <div id='game_board' class="board">
+    </div>
+
+	<script defer>
+        window.onload = function()
+        {
+            const uuid_game = window.location.pathname.split('/')[2]
+            makeRequestWithJWT('get', '/game_info/' + uuid_game, JSON.stringify({})).then((result_request) => {
+                game = result_request.game;
+                type_player = result_request.type_player;
+
+                if (type_player == "not assigned"){type_player = 'Не назначен'}
+                document.getElementById('icon_player_label').innerHTML = 'Ваш значок: ' + type_player;
+                var game_status = ''
+                if (game['web_game_state'] == 'win O'){game_status = 'Выиграл - "O"'}
+                if (game['web_game_state'] == 'win X'){game_status = 'Выиграл - "X"'}
+                if (game['web_game_state'] == 'move O'){game_status = 'Ход - "O"'}
+                if (game['web_game_state'] == 'move X'){game_status = 'Ход - "X"'}
+                if (game['web_game_state'] == 'draw'){game_status = 'Ничья'}
+                if (game['web_game_state'] == 'waiting players'){game_status = 'Ожидание противника'}
+
+                document.getElementById('status_game_label').innerHTML = 'Состояние: ' + game_status;
+
+                html_game_board = document.getElementById('game_board');
+                game_board = game['web_game_board']['web_board']
+                var result_htlm_board = ''
+
+                for (let i = 0; i < game_board.length; i++)
+                {
+                    for (let j = 0; j < game_board[i].length; j++)
+                    {
+                        var new_button = '<button  class="btn" type="submit" name="position" onclick="make_move(' + i + ', ' + j + ')">' + game_board[i][j] + '</button>'
+                        result_htlm_board += new_button
+                    }
+                }
+
+                html_game_board.innerHTML = result_htlm_board
+
+            })
+
+        }
+
+    </script>
+
+
+
+</body>
+</html>

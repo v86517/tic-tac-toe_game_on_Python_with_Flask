@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    <form method="GET" action="/list_games">
+		<button class="btn">Назад</button>
+	</form>
+
+	<h3 id='count_games_label'></h3>
+	<h3 id='count_wins_label'></h3>
+	<h3 id='count_lose_label'></h3>
+    <h3 id='count_draw_label'></h3>
+	
+	<script defer>
+        window.onload = function() 
+        {   
+            const uuid_profile = window.location.pathname.split('/')[2]
+            makeRequestWithJWT('get', '/profile_info/' + uuid_profile, JSON.stringify({})).then((result_request) => {
+                user_info = result_request.user_info;
+                
+				document.getElementById('count_games_label').innerHTML = 'Всего игр: ' + user_info['web_user_count_games'];
+				document.getElementById('count_wins_label').innerHTML = 'Выигрышей: ' + user_info['web_user_count_wins'];
+				document.getElementById('count_lose_label').innerHTML = 'Проигрышей: ' + user_info['web_user_count_lose'];
+				document.getElementById('count_draw_label').innerHTML = 'Ничьих: ' + user_info['web_user_count_draw'];
+            }
+            )
+            
+        }
+        
+    </script>
+	
+{% endblock %}

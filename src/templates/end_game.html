@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    <div id='game_board' class="board"></div>
+
+    <h3 id='game_result'></h3>
+
+	<form method="GET" action="/list_games">
+		<button class="btn">В начало</button>
+	</form>
+
+    <script defer>
+        window.onload = function()
+        {
+            const uuid_game = window.location.pathname.split('/')[2]
+            makeRequestWithJWT('get', '/get_winner/' + uuid_game).then((result_request) => {
+                winner = result_request.winner;
+                game = result_request.game;
+                var winner_text = ''
+                if (winner == 'False'){winner_text = 'Вы проиграли...'}
+                if (winner == 'True'){winner_text = 'Вы выиграли!!!'}
+                if (winner == 'draw'){winner_text = 'Ничья'}
+
+                document.getElementById('game_result').innerHTML = 'Результат игры: ' + winner_text;
+
+
+                html_game_board = document.getElementById('game_board');
+                game_board = game['web_board']
+                var result_htlm_board = ''
+
+                for (let i = 0; i < game_board.length; i++)
+                {
+                    for (let j = 0; j < game_board[i].length; j++)
+                    {
+                        var new_button = '<button  class="btn_end" type="submit" name="position" onclick="make_move(' + i + ', ' + j + ')">' + game_board[i][j] + '</button>'
+                        result_htlm_board += new_button
+                    }
+                }
+
+                html_game_board.innerHTML = result_htlm_board
+
+            })
+        }
+
+    </script>
+
+{% endblock %}

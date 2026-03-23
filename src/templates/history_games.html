@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block content %}
+	
+	<form method="GET" action="/list_games">
+		<button class="btn">Назад</button>
+	</form>
+
+	
+	<table style="margin-left: auto; margin-right: auto; border-collapse: collapse;">
+        <thead>
+		<tr>
+			<th style="width: 350px;">ID игры</th>
+            <th style="width: 300px;">Когда создана игра</th>
+			<th style="width: 100px;">Ваш значок</th>
+			<th style="width: 140px;">Результат игры</th>
+		</tr>
+	</thead>
+	<tbody id='body_table_history_games'>
+	</tbody>
+
+	<script defer>
+        window.onload = function() 
+        {
+			makeRequestWithJWT('get', '/get_history_games').then((result_request) => {
+                list_games = result_request.list_games
+                table_body = document.getElementById('body_table_history_games');
+                var result_body = ''
+                
+                for (let i = 0; i < list_games.length; i++) 
+                {
+                    var game_result = ''
+                    const item = list_games[i];
+                    
+                    var cell_1 = '<td style="text-align: center;">' + item["id_game"] + "</td>";
+                    var cell_2 = '<td style="text-align: center;">' + item["created_datetime"] + "</td>";
+                    var cell_3 = '<td style="text-align: center;">' + item["icon_user"] + "</td>";
+                    if (item["status_game"] == 'win O'){game_result = 'Выиграл - "O"'}
+                    if (item["status_game"] == 'win X'){game_result = 'Выиграл - "X"'}
+                    if (item["status_game"] == 'draw'){game_result = 'Ничья'}
+                    var cell_4 = '<td style="text-align: center;">' + game_result + "</td>";
+                    var row = "<tr style='height: 50px;'>" + cell_1 + cell_2 + cell_3 + cell_4 + "</tr>"
+                    result_body += row
+                }
+                table_body.innerHTML = result_body
+            })
+        }
+        
+    </script>
+
+{% endblock %}

@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block content %}
+	
+	<form method="GET" action="/list_games">
+		<button class="btn">Назад</button>
+	</form>
+
+	<table style="margin-left: auto; margin-right: auto; border-collapse: collapse;">
+	<thead>
+
+        <tr>
+			<th style="width: 350px;">Игрок</th>
+			<th style="width: 120px;">Количество побед</th>
+            <th style="width: 120px;">Количество проигрышей</th>
+            <th style="width: 120px;">Количество ничьих</th>
+		</tr>
+
+	</thead>
+	<tbody id='body_table_list_leaders'>
+	</tbody>
+
+	<script defer>
+        window.onload = function() 
+        {
+			makeRequestWithJWT('get', '/get_leaders_list').then((result_request) => {
+                list_leaders = result_request.list_leaders
+                table_body = document.getElementById('body_table_list_leaders');
+                var result_body = ''
+                
+                for (let i = 0; i < list_leaders.length; i++) 
+                {
+                    const item = list_leaders[i];
+
+                    var id_user_text = '<p style="font-size: 13px;">' + "ID: " + item["id_user"] + "</p>"
+                    var cell_1 = '<td style="text-align: center;">' + item["login"] + id_user_text + "</td>";
+                    var cell_2 = '<td style="text-align: center;">' + item["count_wins"] + "</td>";
+					var cell_3 = '<td style="text-align: center;">' + item["count_lose"] + "</td>";
+					var cell_4 = '<td style="text-align: center;">' + item["count_draw"] + "</td>";
+                    var row = "<tr style='height: 50px;'>" + cell_1 + cell_2 + cell_3 + cell_4 + "</tr>"
+                    result_body += row
+                }
+                table_body.innerHTML = result_body
+            })
+        }
+        
+    </script>
+
+{% endblock %}
