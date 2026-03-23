@@ -1,0 +1,104 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic tac toe</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            <!--margin: 20px;-->
+        }
+         .btn {
+            font-size: 16px;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin: 5px;
+            height: 40px;
+            width: 160px;
+            border-radius: 15px;
+            background-color: #4CAF50;
+            }
+         .btn_end {
+            text-align: center;
+            font-size: 36px;
+            width: 100px;
+            height: 100px;
+         }
+         .board {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            grid-template-rows: repeat(3, 100px);
+            width: 310px;
+            height: 310px;
+            margin-left: auto;
+            margin-right: auto;
+         }
+
+        .btn:hover {
+            background-color: #45a049; /* Темно-зеленый при наведении */
+        }
+    </style>
+
+	<script>
+		async function refresh_jwt()
+		{
+			const response = await fetch('/refresh_refresh_token/' + localStorage.getItem('refresh_token'), {method: 'get'});
+			const result = await response.json();
+			localStorage.setItem('access_token', result["accessToken"]);
+            localStorage.setItem('refresh_token', result["refreshToken"]);
+		}
+
+        async function makeRequestWithJWT(new_method, new_url)
+        {
+            const options = {
+                method: new_method,
+                headers:
+                    {
+                    Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+                    }
+                };
+
+            const response = await fetch(new_url, options);
+            const result = await response.json();
+
+            if (result.error)
+            {
+                // alert('Error: ' + result.error);
+                window.location.href = '/login'
+            }
+            else
+            {
+				await refresh_jwt();
+                return result
+            }
+        }
+    </script>
+
+</head>
+
+<body>
+    <section>
+		<h3 id='main_login_user_board'></h3>
+        <h5 id='main_id_user_board'></h5>
+        <div>
+            <div>
+               {% block content %}
+               {% endblock %}
+            </div>
+        </div>
+    </section>
+
+	<script defer>
+        makeRequestWithJWT('get', '/get_user_uuid').then((user_info) => {
+            document.getElementById('main_id_user_board').innerHTML = 'ID: ' + user_info.uuid_user;
+            document.getElementById('main_login_user_board').innerHTML = 'Игрок: ' + user_info.login_user;
+        })
+
+    </script>
+
+</body>
+
+</html>
